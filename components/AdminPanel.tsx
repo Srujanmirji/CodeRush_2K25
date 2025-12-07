@@ -110,11 +110,8 @@ const AdminPanel = () => {
       try {
         const json = JSON.parse(text);
         if (Array.isArray(json)) {
-          // VERSION CHECK: V3 Script must return _rowIndex
-          if (json.length > 0 && typeof json[0]._rowIndex === 'undefined') {
-            setFetchError("ALERT: You are using the OLD Google Script code. Please copy the V3 code from 'google_apps_script.md' and deploy 'New Version' again.");
-            return;
-          }
+          // REMOVED LEGACY CHECK for _rowIndex. The new script does not return it.
+          // if (json.length > 0 && typeof json[0]._rowIndex === 'undefined') { ... }
 
           setData(json);
         } else {
@@ -135,24 +132,24 @@ const AdminPanel = () => {
   };
 
   // UPDATE STATUS
-  const handleStatusUpdate = async (rowIndex: number, newStatus: string) => {
+  const handleStatusUpdate = async (registrationId: string, newStatus: string) => {
     if (!confirm(`Change status to ${newStatus}?`)) return;
 
-    setUpdatingId(rowIndex.toString());
+    setUpdatingId(registrationId);
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         body: JSON.stringify({
           action: "updateStatus",
-          rowIndex: rowIndex,
+          id: registrationId,
           status: newStatus
         })
       });
 
       // Optimistic update
       setData(prev => prev.map(item =>
-        item._rowIndex === rowIndex ? { ...item, "Status": newStatus } : item
+        item["Registration ID"] === registrationId ? { ...item, "Status": newStatus } : item
       ));
 
     } catch (error) {
@@ -341,7 +338,7 @@ const AdminPanel = () => {
               <tbody className="divide-y divide-gray-800">
                 {filteredData.length > 0 ? (
                   filteredData.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-gray-800/30 transition-colors">
+                    <tr key={row["Registration ID"]} className="hover:bg-gray-800/30 transition-colors">
                       <td className="p-4">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border
                                             ${row["Status"] === 'Verified' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
@@ -395,15 +392,15 @@ const AdminPanel = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex flex-col gap-2">
-                          {updatingId === row._rowIndex?.toString() ? (
+                          {updatingId === row["Registration ID"] ? (
                             <span className="text-xs text-gray-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Updating</span>
                           ) : (
                             <div className="flex bg-gray-800 rounded border border-gray-700 overflow-hidden">
                               <select
-                                disabled={updatingId === row._rowIndex?.toString()}
+                                disabled={updatingId === row["Registration ID"]}
                                 className="bg-transparent text-xs px-3 py-2 outline-none cursor-pointer hover:bg-white/5 transition-colors disabled:opacity-50"
                                 value=""
-                                onChange={(e) => handleStatusUpdate(row._rowIndex!, e.target.value)}
+                                onChange={(e) => handleStatusUpdate(row["Registration ID"], e.target.value)}
                               >
                                 <option value="">Change Status...</option>
                                 <option value="Verified">Verified</option>

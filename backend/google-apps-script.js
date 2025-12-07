@@ -20,7 +20,7 @@
 function doGet(e) {
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
-  
+
   try {
     const doc = SpreadsheetApp.getActiveSpreadsheet();
     // Try to find "Registrations" sheet, fallback to first sheet if missing
@@ -28,17 +28,17 @@ function doGet(e) {
     if (!sheet) {
       sheet = doc.getSheets()[0];
     }
-    
+
     const data = sheet.getDataRange().getValues();
     // If sheet is empty, return empty array
     if (data.length <= 1) {
-       return ContentService.createTextOutput(JSON.stringify([]))
+      return ContentService.createTextOutput(JSON.stringify([]))
         .setMimeType(ContentService.MimeType.JSON);
     }
 
     const headers = data[0];
     const rows = data.slice(1);
-    
+
     const result = rows.map((row) => {
       let obj = {};
       headers.forEach((header, index) => {
@@ -49,9 +49,9 @@ function doGet(e) {
 
     return ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.JSON);
-      
+
   } catch (e) {
-    return ContentService.createTextOutput(JSON.stringify({error: e.toString()}))
+    return ContentService.createTextOutput(JSON.stringify({ error: e.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
@@ -76,86 +76,100 @@ function doPost(e) {
       sheet = doc.insertSheet(sheetName);
       // Add Headers immediately
       sheet.appendRow([
-        "Registration ID", "Timestamp", "Team Name", 
-        "Leader Name", "Leader Email", "Leader Phone", "Leader Branch", "Leader USN", "Leader Sem", 
-        "Member 2 Name", "Member 2 Email", "Member 2 Phone", "Member 2 Branch", "Member 2 USN", "Member 2 Sem", 
+        "Registration ID", "Timestamp", "Team Name",
+        "Leader Name", "Leader Email", "Leader Phone", "Leader Branch", "Leader USN", "Leader Sem",
+        "Member 2 Name", "Member 2 Email", "Member 2 Phone", "Member 2 Branch", "Member 2 USN", "Member 2 Sem",
         "Payment Screenshot URL", "Status"
       ]);
     }
 
     // Parse the incoming JSON data
     const data = JSON.parse(e.postData.contents);
-    const action = data.action || 'register'; 
+    const action = data.action || 'register';
 
     if (action === 'register') {
-        // 1. Handle Screenshot Image Upload
-        let fileUrl = "No File Uploaded";
-        try {
-          if (data.imageBase64) {
-            const folder = DriveApp.getFolderById(folderId);
-            const contentType = data.imageMimeType || "image/png";
-            // Clean base64 string just in case
-            const base64Data = data.imageBase64.split(',').pop();
-            const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), contentType, data.teamName + "_Payment_Proof");
-            const file = folder.createFile(blob);
-            file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-            fileUrl = file.getUrl();
-          }
-        } catch (uploadError) {
-          fileUrl = "Error Uploading File: " + uploadError.toString();
+      // 1. Handle Screenshot Image Upload
+      let fileUrl = "No File Uploaded";
+      try {
+        if (data.imageBase64) {
+          const folder = DriveApp.getFolderById(folderId);
+          const contentType = data.imageMimeType || "image/png";
+          // Clean base64 string just in case
+          const base64Data = data.imageBase64.split(',').pop();
+          const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), contentType, data.teamName + "_Payment_Proof");
+          const file = folder.createFile(blob);
+          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          fileUrl = file.getUrl();
         }
+      } catch (uploadError) {
+        fileUrl = "Error Uploading File: " + uploadError.toString();
+      }
 
-        // 2. Generate Unique ID
-        const uniqueId = "HTF-" + Math.floor(100000 + Math.random() * 900000);
+      // 2. Generate Unique ID
+      const uniqueId = "HTF-" + Math.floor(100000 + Math.random() * 900000);
 
-        // 3. Append Row
-        sheet.appendRow([
-          uniqueId,                    
-          new Date(),                  
-          data.teamName,
-          data.leaderName,
-          data.leaderEmail,
-          data.leaderPhone,
-          data.leaderBranch,
-          data.leaderUSN,
-          data.leaderSemester,
-          data.member2Name,
-          data.member2Email,
-          data.member2Phone,
-          data.member2Branch,
-          data.member2USN,
-          data.member2Semester,
-          fileUrl,                     
-          "Pending Verification"       
-        ]);
+      // 3. Dynamic Append (Header-Aware)
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      const newRow = new Array(headers.length).fill(""); // Initialize with empty strings
 
-        return ContentService.createTextOutput(JSON.stringify({ result: 'success', message: 'Data saved', id: uniqueId }))
-          .setMimeType(ContentService.MimeType.JSON);
+      // Map data to headers
+      const fieldMap = {
+        "Registration ID": uniqueId,
+        "Timestamp": new Date(),
+        "Team Name": data.teamName,
+        "Leader Name": data.leaderName,
+        "Leader Email": data.leaderEmail,
+        "Leader Phone": data.leaderPhone,
+        "Leader Branch": data.leaderBranch,
+        "Leader USN": data.leaderUSN,
+        "Leader Sem": data.leaderSemester,
+        "Member 2 Name": data.member2Name,
+        "Member 2 Email": data.member2Email,
+        "Member 2 Phone": data.member2Phone,
+        "Member 2 Branch": data.member2Branch,
+        "Member 2 USN": data.member2USN,
+        "Member 2 Sem": data.member2Semester,
+        "Payment Screenshot URL": fileUrl,
+        "Status": "Pending Verification"
+      };
+
+      // Fill the row array based on header names
+      headers.forEach((header, index) => {
+        if (fieldMap.hasOwnProperty(header)) {
+          newRow[index] = fieldMap[header];
+        }
+      });
+
+      // Append the correctly ordered row
+      sheet.appendRow(newRow);
+
+      return ContentService.createTextOutput(JSON.stringify({ result: 'success', message: 'Data saved', id: uniqueId }))
+        .setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     // Status Update Logic (Same as before)
     if (action === 'updateStatus') {
-        const idToFind = data.id;
-        const newStatus = data.status;
-        const range = sheet.getDataRange();
-        const values = range.getValues();
-        
-        // Find header index for "Status" and "Registration ID"
-        const headers = values[0];
-        const statusIdx = headers.indexOf("Status");
-        const regIdIdx = headers.indexOf("Registration ID");
+      const idToFind = data.id;
+      const newStatus = data.status;
+      const range = sheet.getDataRange();
+      const values = range.getValues();
 
-        if (statusIdx === -1 || regIdIdx === -1) {
-           return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'Columns not found' })).setMimeType(ContentService.MimeType.JSON);
-        }
+      // Find header index for "Status" and "Registration ID"
+      const headers = values[0];
+      const statusIdx = headers.indexOf("Status");
+      const regIdIdx = headers.indexOf("Registration ID");
 
-        for (let i = 1; i < values.length; i++) {
-            if (values[i][regIdIdx] == idToFind) {
-                 sheet.getRange(i + 1, statusIdx + 1).setValue(newStatus);
-                 return ContentService.createTextOutput(JSON.stringify({ result: 'success', message: 'Status updated' })).setMimeType(ContentService.MimeType.JSON);
-            }
+      if (statusIdx === -1 || regIdIdx === -1) {
+        return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'Columns not found' })).setMimeType(ContentService.MimeType.JSON);
+      }
+
+      for (let i = 1; i < values.length; i++) {
+        if (values[i][regIdIdx] == idToFind) {
+          sheet.getRange(i + 1, statusIdx + 1).setValue(newStatus);
+          return ContentService.createTextOutput(JSON.stringify({ result: 'success', message: 'Status updated' })).setMimeType(ContentService.MimeType.JSON);
         }
-        return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'ID not found' })).setMimeType(ContentService.MimeType.JSON);
+      }
+      return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'ID not found' })).setMimeType(ContentService.MimeType.JSON);
     }
 
   } catch (e) {
