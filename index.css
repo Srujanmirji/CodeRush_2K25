@@ -1,0 +1,9 @@
+/* 
+  Custom Global CSS
+  Note: Tailwind is loaded via CDN in index.html, so we don't use @tailwind directives here.
+*/
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

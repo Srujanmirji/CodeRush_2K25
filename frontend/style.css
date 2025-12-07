@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-brand-dark text-white font-body overflow-x-hidden;
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    @apply font-display text-brand-neon tracking-wider;
+    text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+  }
+}
+
+@layer components {
+
+  /* Glassmorphism Panel */
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6 shadow-xl;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Neon Button */
+  .btn-neon {
+    @apply px-8 py-3 bg-transparent border border-brand-neon text-brand-neon font-bold uppercase tracking-widest transition-all duration-300 relative overflow-hidden;
+    z-index: 1;
+  }
+
+  .btn-neon::before {
+    content: '';
+    @apply absolute top-0 left-0 w-0 h-full bg-brand-neon opacity-20 transition-all duration-300;
+    z-index: -1;
+  }
+
+  .btn-neon:hover::before {
+    @apply w-full;
+  }
+
+  .btn-neon:hover {
+    @apply text-white;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+  }
+
+  /* 3D Flip Card Container */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b15;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00f7ff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7000ff;
+}
+
+/* 3D Canvas Background */
+#canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
