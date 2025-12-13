@@ -82,10 +82,10 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full z-50 top-0 left-0 transition-all duration-300 ${scrolled || isOpen ? 'bg-cyber-black/90 backdrop-blur-lg border-b border-cyber-glass' : 'bg-transparent border-transparent'
+      className={`fixed w-full z-[100] top-0 left-0 transition-all duration-300 ${scrolled || isOpen ? 'bg-cyber-black/90 backdrop-blur-lg border-b border-cyber-glass' : 'bg-transparent border-transparent'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[70]">
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
           <a href="/" onClick={goToHome} className="flex items-center space-x-2 flex-shrink-0 cursor-pointer">
@@ -126,7 +126,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`md:hidden fixed inset-0 z-40 bg-cyber-black/95 backdrop-blur-xl transition-transform duration-300 ease-in-out pt-24 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`md:hidden fixed inset-0 z-[60] bg-cyber-black backdrop-blur-xl transition-transform duration-300 ease-in-out pt-24 ${isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
       >
         <div className="px-4 pt-2 pb-3 space-y-4 flex flex-col items-center">

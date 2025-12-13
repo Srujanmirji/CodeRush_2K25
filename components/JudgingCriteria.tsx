@@ -67,7 +67,7 @@ const JudgingCriteria = () => {
           </p>
         </div>
 
-        <div className="bg-cyber-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden group hover:border-cyber-blue/30 transition-all duration-500">
+        <div className="bg-cyber-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-5 sm:p-8 md:p-12 shadow-2xl relative overflow-hidden group hover:border-cyber-blue/30 transition-all duration-500">
           {/* Background Grid */}
           <div className="absolute inset-0 opacity-20 pointer-events-none"
             style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }}>

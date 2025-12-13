@@ -58,7 +58,7 @@ const events = [
     {
         title: "Results & Award Ceremony",
         date: "04:45 PM",
-        description: "Winners announced, certificates and prizes distributed.",
+        description: "Winners announced and certificates distributed.",
         icon: <Trophy className="w-6 h-6 text-yellow-500" />,
         color: "yellow-500"
     }
@@ -135,7 +135,7 @@ const Timeline = () => {
 
                                 {/* Card */}
                                 <div className="w-full md:w-1/2 pl-12 md:pl-0 md:px-8">
-                                    <div className={`p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-${event.color}/50 transition-all duration-300 group hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]`}>
+                                    <div className={`p-4 sm:p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-${event.color}/50 transition-all duration-300 group hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]`}>
                                         <div className="flex items-center gap-4 mb-3">
                                             <div className={`p-2 rounded-lg bg-${event.color}/10 hidden sm:block`}>
                                                 {event.icon}

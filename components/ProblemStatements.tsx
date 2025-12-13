@@ -98,7 +98,7 @@ const ThemeAndRules = () => {
             className="relative max-w-4xl mx-auto group perspective-1000"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue/20 via-cyber-purple/20 to-cyber-pink/20 blur-xl group-hover:blur-3xl transition-all duration-500 opacity-50 group-hover:opacity-100"></div>
-            <div className="relative bg-cyber-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 md:p-12 text-center overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] shadow-2xl">
+            <div className="relative bg-cyber-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 md:p-12 text-center overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] shadow-2xl">
               {/* Animated Grid Background */}
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#4a5568 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
@@ -138,7 +138,7 @@ const ThemeAndRules = () => {
                 className="group relative h-full"
               >
                 {/* 3D Card Container */}
-                <div className="h-full bg-cyber-black/40 backdrop-blur-md border border-white/5 rounded-2xl p-8 
+                <div className="h-full bg-cyber-black/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 sm:p-8 
                                       transition-all duration-500 ease-out
                                       hover:bg-white/10 hover:border-cyber-blue/30 
                                       hover:shadow-[0_20px_40px_-15px_rgba(0,240,255,0.2)]

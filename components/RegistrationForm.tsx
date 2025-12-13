@@ -365,13 +365,14 @@ const RegistrationForm = () => {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="w-full flex justify-end items-center gap-3 mb-4">
-            <div className="text-right hidden sm:block">
+          <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-3 mb-4">
+            <div className="text-center sm:text-right w-full sm:w-auto mb-2 sm:mb-0">
               <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Logged in as</p>
-              <p className="text-xs text-cyber-blue font-mono bg-cyber-blue/10 px-2 py-1 rounded border border-cyber-blue/20">{user?.email}</p>
+              <p className="text-xs text-cyber-blue font-mono bg-cyber-blue/10 px-2 py-1 rounded border border-cyber-blue/20 break-all">{user?.email}</p>
             </div>
-            <button onClick={handleLogout} title="Sign Out" className="p-2 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg transition-colors border border-white/5 hover:border-red-500/30">
+            <button onClick={handleLogout} title="Sign Out" className="p-2 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg transition-colors border border-white/5 hover:border-red-500/30 w-full sm:w-auto flex justify-center">
               <LogOut className="w-4 h-4" />
+              <span className="ml-2 sm:hidden text-xs uppercase font-bold tracking-wider">Log Out</span>
             </button>
           </div>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-6 tracking-tight">INITIALIZE REGISTRATION</h2>

@@ -154,10 +154,12 @@ function doPost(e) {
       const range = sheet.getDataRange();
       const values = range.getValues();
 
-      // Find header index for "Status" and "Registration ID"
+      // Find header index for "Status", "Registration ID", "Leader Email", "Team Name"
       const headers = values[0];
       const statusIdx = headers.indexOf("Status");
       const regIdIdx = headers.indexOf("Registration ID");
+      const emailIdx = headers.indexOf("Leader Email");
+      const teamNameIdx = headers.indexOf("Team Name");
 
       if (statusIdx === -1 || regIdIdx === -1) {
         return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'Columns not found' })).setMimeType(ContentService.MimeType.JSON);
@@ -165,7 +167,52 @@ function doPost(e) {
 
       for (let i = 1; i < values.length; i++) {
         if (values[i][regIdIdx] == idToFind) {
+          // Update Status
           sheet.getRange(i + 1, statusIdx + 1).setValue(newStatus);
+
+          // --------------------------------------------------------
+          // SEND EMAIL IF VERIFIED
+          // --------------------------------------------------------
+          if (newStatus === "Verified" && emailIdx !== -1) {
+            const email = values[i][emailIdx];
+            const teamName = teamNameIdx !== -1 ? values[i][teamNameIdx] : "Participant";
+
+            const subject = "Registration Confirmed: CodeRush 2K25";
+            const body = `
+Hello Team ${teamName},
+
+Congratulations! Your registration for CodeRush 2K25 has been VERIFIED.
+
+We are excited to have you onboard for this ultimate frontend battle.
+
+🚀 NEXT STEPS:
+1. Join the Official WhatsApp Group for important updates:
+   https://chat.whatsapp.com/YOUR_GROUP_LINK_HERE  <-- (Please update this link)
+
+2. Event Details:
+   - Date: 27th December 2025
+   - Reporting Time: 09:00 AM
+   - Venue: JCET Hubballi
+
+See you at the arena!
+
+Regards,
+CodeRush Team
+JCET Hubballi
+`;
+
+            try {
+              MailApp.sendEmail({
+                to: email,
+                subject: subject,
+                body: body
+              });
+            } catch (emailErr) {
+              // Log error silently so we don't break the response
+              console.error("Email sending failed: " + emailErr.toString());
+            }
+          }
+
           return ContentService.createTextOutput(JSON.stringify({ result: 'success', message: 'Status updated' })).setMimeType(ContentService.MimeType.JSON);
         }
       }

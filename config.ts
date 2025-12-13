@@ -5,7 +5,7 @@
 
 // POST DEPLOYMENT: Replace this URL with your new Web App URL from Google Apps Script
 // This single URL handles both Registration (POST) and Admin Dashboard (GET)
-export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxM_HrCgh9iJo5biDyGHbxq_p7ZnBXV5jBbspVCjK7K1kYhyXLns79jqi1Xc0F2yjzK/exec";
+export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_Ih4gFV3yEkWVbl7MLuv0CFQLOpsp4GUAyEdz4G290NKNAWSIMtaL4AksIlTCy0lv/exec";
 
 // Admin Emails Whitelist
 export const ALLOWED_ADMIN_EMAILS = [

@@ -68,7 +68,7 @@ const About = () => {
                     </div>
 
                     {/* Visual / Graphic */}
-                    <div className="about-text relative hidden md:block">
+                    <div className="about-text relative block mt-10 md:mt-0">
                         {/* Abstract decorative element */}
                         <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue/20 to-cyber-pink/20 blur-3xl rounded-full opacity-30 animate-pulse"></div>
                         <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]">

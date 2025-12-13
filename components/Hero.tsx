@@ -82,7 +82,7 @@ const Hero = () => {
         <a
           ref={btnRef}
           href="#register"
-          className="inline-block relative px-8 sm:px-12 py-3 sm:py-4 bg-transparent border-2 border-cyber-pink text-white font-display font-bold text-sm sm:text-lg uppercase tracking-widest overflow-hidden group hover:shadow-[0_0_30px_#ff00ff] transition-all duration-300"
+          className="inline-block relative px-6 py-3 xs:px-8 xs:py-4 sm:px-12 bg-transparent border-2 border-cyber-pink text-white font-display font-bold text-sm sm:text-lg uppercase tracking-widest overflow-hidden group hover:shadow-[0_0_30px_#ff00ff] transition-all duration-300"
         >
           <span className="relative z-10 group-hover:text-black transition-colors duration-300">Start System</span>
           <div className="absolute inset-0 bg-cyber-pink transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0"></div>
