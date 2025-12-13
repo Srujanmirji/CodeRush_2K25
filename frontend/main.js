@@ -33,7 +33,7 @@ form.addEventListener('submit', async (e) => {
             key: "rzp_test_YourKeyId", // PLACEHOLDER: Replace with your actual Test Key ID
             amount: order.amount,
             currency: order.currency,
-            name: "FrontEnd Domination",
+            name: "CodeRush 2K25",
             description: "Team Registration Fee",
             order_id: order.id,
             handler: async function (response) {

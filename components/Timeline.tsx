@@ -114,7 +114,7 @@ const Timeline = () => {
                     EVENT <span className="text-cyber-blue">TIMELINE</span>
                 </h2>
                 <p className="text-center text-cyber-pink font-mono text-lg mb-16 tracking-widest animate-pulse">
-                    // 6 HOURS OF FRONTEND DOMINATION //
+                    // 6 HOURS OF CODERUSH //
                 </p>
 
                 <div className="relative">

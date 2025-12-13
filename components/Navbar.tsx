@@ -1,10 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Terminal } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle scroll effect for navbar background
   useEffect(() => {
@@ -16,19 +18,46 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'About', href: '#about' },
-    { name: 'Rules', href: '#rules' },
-    { name: 'Register', href: '#register' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'About', href: '/#about' },
+    { name: 'Rules', href: '/#rules' },
+    { name: 'Register', href: '/#register' }, // This might be redundant if we have a separate page, but could link to the section on home that has the button? Or just direct to /register? Let's keep it as is for now, pointing to home sections.
+    { name: 'Contact', href: '/#contact' },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsOpen(false); // Close mobile menu if open
 
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
+    // Parse target hash
+    // href will be like '/#about'
+    const [path, hash] = href.split('#');
+    const targetId = hash;
 
+    if (location.pathname !== '/') {
+      // If not on home, navigate to home then scroll
+      // We'll navigate to the hash URL directly, react-router usually handles this or we might need a useEffect in Home to scroll.
+      // For simplicity, let's just navigate to root with hash.
+      navigate(`/#${targetId}`);
+      // Note: Scroll behavior might need to be handled in Home.tsx if it doesn't auto-scroll. 
+      // But simply navigating to / first is better.
+
+      // Actually, let's just navigate to "/" and rely on a timeout or the existing logic in Home? 
+      // Best approach for single-page + multi-page hybrid:
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const navbarHeight = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - navbarHeight;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 100);
+      return;
+    }
+
+    // If on Home page already
+    const element = document.getElementById(targetId);
     if (element) {
       const navbarHeight = 80; // Approximate height of the fixed navbar
       const elementPosition = element.getBoundingClientRect().top;
@@ -41,6 +70,16 @@ const Navbar = () => {
     }
   };
 
+  const goToHome = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== '/') {
+      navigate('/');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setIsOpen(false);
+  };
+
   return (
     <nav
       className={`fixed w-full z-50 top-0 left-0 transition-all duration-300 ${scrolled || isOpen ? 'bg-cyber-black/90 backdrop-blur-lg border-b border-cyber-glass' : 'bg-transparent border-transparent'
@@ -49,10 +88,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
-          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); setIsOpen(false); }} className="flex items-center space-x-2 flex-shrink-0 cursor-pointer">
+          <a href="/" onClick={goToHome} className="flex items-center space-x-2 flex-shrink-0 cursor-pointer">
             <Terminal className="text-cyber-blue w-6 h-6 md:w-8 md:h-8" />
             <span className="font-display font-bold text-lg md:text-2xl tracking-wider text-white whitespace-nowrap">
-              FRONTEND<span className="text-cyber-pink"> DOMINATION</span>
+              CODERUSH<span className="text-cyber-pink"> 2K25</span>
             </span>
           </a>
 

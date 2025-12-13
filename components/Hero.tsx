@@ -3,7 +3,7 @@ import gsap from 'gsap';
 
 const Hero = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
@@ -68,12 +68,16 @@ const Hero = () => {
           HACK<span className="text-cyber-pink mx-2 inline-block" style={{ textShadow: '0 0 30px rgba(255, 0, 255, 0.6)' }}>THE</span>FUTURE
         </h1>
 
-        <p
-          ref={subtitleRef}
-          className="text-sm xs:text-base sm:text-xl md:text-2xl font-sans text-cyber-blue/80 tracking-[0.1em] md:tracking-[0.2em] mb-12 uppercase"
-        >
-          Dec 19, 2025 • JCET Hubballi • Frontend Edition
-        </p>
+        <div ref={subtitleRef} className="flex flex-col items-center mb-12">
+          <p className="text-cyber-pink text-lg xs:text-xl sm:text-2xl md:text-3xl font-display tracking-wider mb-4 uppercase drop-shadow-[0_0_10px_rgba(255,0,255,0.5)]">
+            Not just a hackathon - a full-stack battle with vibes.
+          </p>
+          <p
+            className="text-sm xs:text-base sm:text-xl md:text-2xl font-sans text-cyber-blue/80 tracking-[0.1em] md:tracking-[0.2em] uppercase"
+          >
+            Dec 27, 2025 • JCET Hubballi
+          </p>
+        </div>
 
         <a
           ref={btnRef}

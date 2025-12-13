@@ -1,5 +1,5 @@
 {
-  "name": "frontend-domination-2025",
+  "name": "coderush-2k25",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -20,6 +20,7 @@
     "razorpay": "^2.9.6",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-router-dom": "^7.10.1",
     "three": "^0.181.2"
   },
   "devDependencies": {

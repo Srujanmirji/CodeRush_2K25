@@ -9,32 +9,37 @@ const rules = [
   {
     id: 1,
     icon: <Code className="w-8 h-8 text-cyber-blue" />,
-    text: "Original work only. Pre-built templates are not allowed for the core logic."
+    text: "Teams must build both frontend and backend."
   },
   {
     id: 2,
     icon: <Users className="w-8 h-8 text-cyber-purple" />,
-    text: "Teams can consist of 1 to 2 members only."
+    text: "Any tech stack allowed (React, Node, Django, Firebase, etc.)."
   },
   {
     id: 3,
     icon: <Shield className="w-8 h-8 text-red-500" />,
-    text: "Plagiarism of any kind will lead to immediate disqualification."
+    text: "Backend APIs must be functional (mock data allowed only if justified)."
   },
   {
     id: 4,
     icon: <Upload className="w-8 h-8 text-cyber-pink" />,
-    text: "All submissions must be made via the designated portal before the deadline."
+    text: "Focus on original work. Plagiarism leads to immediate disqualification."
   },
   {
     id: 5,
     icon: <Heart className="w-8 h-8 text-green-400" />,
-    text: "Respect the Code of Conduct. Be nice to other hackers."
+    text: "No pre-built templates or full boilerplates. Open-source libraries are allowed."
   },
   {
     id: 6,
     icon: <Gavel className="w-8 h-8 text-yellow-400" />,
-    text: "Decision of the judges is final and binding."
+    text: "Judges’ decision will be final."
+  },
+  {
+    id: 7,
+    icon: <Users className="w-8 h-8 text-white" />,
+    text: "Teams can consist of 1 to 2 members only."
   }
 ];
 
@@ -83,7 +88,7 @@ const ThemeAndRules = () => {
         <div className="mb-20 relative z-10">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-              EVENT <span className="text-cyber-pink">THEME</span>
+              PROBLEM <span className="text-cyber-pink">STATEMENTS</span>
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-transparent via-cyber-blue to-transparent mx-auto"></div>
           </div>
@@ -118,7 +123,7 @@ const ThemeAndRules = () => {
           <div className="text-center mb-12 relative z-10">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4 flex items-center justify-center gap-3">
               <AlertTriangle className="text-yellow-400 w-8 h-8" />
-              RULES & <span className="text-cyber-blue">ELIGIBILITY</span>
+              RULES & <span className="text-cyber-blue">GUIDELINES</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Adherence to these protocols is mandatory.

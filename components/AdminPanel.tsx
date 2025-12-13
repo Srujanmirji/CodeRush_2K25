@@ -247,73 +247,83 @@ const AdminPanel = () => {
   // RENDER: DASHBOARD
   // ------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans">
+    <div className="min-h-screen bg-[#0a0a0a] text-gray-100 font-sans selection:bg-blue-500/30">
       {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-20">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <LayoutDashboard className="w-6 h-6 text-blue-500" />
-            <h1 className="text-xl font-bold tracking-wide">ADMIN DASHBOARD</h1>
-            <span className="bg-gray-800 text-gray-400 text-xs px-2 py-1 rounded">v2.1</span>
+      <header className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800 sticky top-0 z-30">
+        <div className="max-w-[1920px] mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="bg-blue-600/10 p-2 rounded-lg border border-blue-500/20">
+              <LayoutDashboard className="w-6 h-6 text-blue-500" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-wide text-white">ADMIN <span className="text-blue-500">DASHBOARD</span></h1>
+              <p className="text-xs text-gray-500 font-mono">HackTheFuture Config v2.1</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-sm text-gray-400">
-              <UserIcon className="w-4 h-4" />
-              <span>{user.email}</span>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-3 text-sm bg-gray-900 border border-gray-800 rounded-full px-4 py-1.5">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              <span className="text-gray-300 font-medium">{user.email}</span>
             </div>
-            <div className="h-6 w-px bg-gray-700 mx-2 hidden sm:block"></div>
-            <button onClick={fetchData} className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full transition-colors" title="Refresh Data">
-              <RefreshCw className={`w-5 h-5 ${dataLoading ? 'animate-spin' : ''}`} />
-            </button>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-red-400 hover:text-red-300 text-sm font-medium">
-              <LogOut className="w-4 h-4" /> Logout
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button onClick={fetchData} className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors border border-transparent hover:border-gray-700" title="Refresh Data">
+                <RefreshCw className={`w-5 h-5 ${dataLoading ? 'animate-spin text-blue-500' : ''}`} />
+              </button>
+              <button onClick={handleLogout} className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-4 py-2.5 rounded-lg text-sm font-bold transition-all border border-red-500/20 hover:border-red-500/40">
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="p-4 sm:p-6 lg:p-8 max-w-[1920px] mx-auto">
+      <main className="p-6 lg:p-10 max-w-[1920px] mx-auto">
 
         {/* Controls Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 bg-gray-900/30 p-6 rounded-2xl border border-gray-800">
+          <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto">
             {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
               <input
                 type="text"
-                placeholder="Search team, name, ID..."
+                placeholder="Search team, leader..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-full sm:w-64"
+                className="pl-12 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none w-full md:w-80 transition-all shadow-inner"
               />
             </div>
 
             {/* Filter */}
-            <div className="flex items-center gap-2 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
-              <Filter className="w-4 h-4 text-gray-500" />
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Filter className="w-4 h-4 text-gray-500" />
+              </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-transparent text-sm text-gray-300 focus:outline-none cursor-pointer"
+                className="pl-10 pr-10 py-3 bg-gray-950 border border-gray-800 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500/50 outline-none appearance-none cursor-pointer w-full md:w-48 hover:border-gray-700 transition-colors"
               >
-                <option value="All">All Status</option>
-                <option value="Pending Verification">Pending</option>
-                <option value="Verified">Verified</option>
-                <option value="Rejected">Rejected</option>
+                <option value="All" className="bg-gray-900 py-2">All Status</option>
+                <option value="Pending Verification" className="bg-gray-900 py-2">Pending</option>
+                <option value="Verified" className="bg-gray-900 py-2">Verified</option>
+                <option value="Rejected" className="bg-gray-900 py-2">Rejected</option>
               </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-xs">▼</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-400">
-              Showing <span className="font-bold text-white">{filteredData.length}</span> entries
+          <div className="flex items-center gap-6 w-full xl:w-auto justify-between xl:justify-end">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-400">Total Entries:</span>
+              <span className="bg-gray-800 text-white px-3 py-1 rounded-md font-mono font-bold text-sm border border-gray-700">{filteredData.length}</span>
             </div>
             <button
               onClick={downloadCSV}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white text-sm font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 transform hover:-translate-y-0.5"
             >
               <Download className="w-4 h-4" /> Export CSV
             </button>
@@ -321,92 +331,120 @@ const AdminPanel = () => {
         </div>
 
         {/* Table Container */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[1200px]">
               <thead>
-                <tr className="bg-gray-800/50 text-gray-400 text-xs uppercase tracking-wider">
-                  <th className="p-4 font-medium">Status</th>
-                  <th className="p-4 font-medium">Reg ID</th>
-                  <th className="p-4 font-medium">Team Info</th>
-                  <th className="p-4 font-medium">Leader Details</th>
-                  <th className="p-4 font-medium">Member 2</th>
-                  <th className="p-4 font-medium">Payment</th>
-                  <th className="p-4 font-medium">Actions</th>
+                <tr className="bg-black/40 border-b border-gray-800 text-gray-400 text-xs font-bold uppercase tracking-widest">
+                  <th className="px-8 py-5 w-[140px]">Status</th>
+                  <th className="px-6 py-5 w-[120px]">Reg ID</th>
+                  <th className="px-6 py-5 w-[200px]">Team Info</th>
+                  <th className="px-6 py-5 w-[250px]">Leader Details</th>
+                  <th className="px-6 py-5 w-[250px]">Member 2</th>
+                  <th className="px-6 py-5 w-[140px]">Payment</th>
+                  <th className="px-8 py-5 w-[200px] text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
+              <tbody className="divide-y divide-gray-800/50">
                 {filteredData.length > 0 ? (
                   filteredData.map((row, idx) => (
-                    <tr key={row["Registration ID"]} className="hover:bg-gray-800/30 transition-colors">
-                      <td className="p-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border
-                                            ${row["Status"] === 'Verified' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                            row["Status"] === 'Rejected' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                              'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>
-                          {row["Status"] === 'Verified' && <CheckCircle className="w-3 h-3" />}
-                          {row["Status"] === 'Rejected' && <XCircle className="w-3 h-3" />}
-                          {row["Status"] === 'Pending Verification' && <Clock className="w-3 h-3" />}
-                          {row["Status"]}
+                    <tr key={row["Registration ID"]} className="hover:bg-blue-500/5 transition-colors group">
+                      {/* STATUS */}
+                      <td className="px-8 py-6 align-top">
+                        <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border shadow-sm
+                                            ${row["Status"] === 'Verified' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10' :
+                            row["Status"] === 'Rejected' ? 'bg-red-500/10 text-red-400 border-red-500/20 shadow-red-500/10' :
+                              'bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-amber-500/10'}`}>
+                          {row["Status"] === 'Verified' && <CheckCircle className="w-3.5 h-3.5" />}
+                          {row["Status"] === 'Rejected' && <XCircle className="w-3.5 h-3.5" />}
+                          {row["Status"] === 'Pending Verification' && <Loader2 className="w-3.5 h-3.5 animate-spin-slow" />}
+                          {row["Status"] === 'Pending Verification' ? 'Pending' : row["Status"]}
                         </span>
                       </td>
-                      <td className="p-4 font-mono text-sm text-blue-400 font-bold">
-                        {row["Registration ID"]}
-                        <div className="text-xs text-gray-600 font-normal mt-1">
+
+                      {/* REG ID */}
+                      <td className="px-6 py-6 align-top">
+                        <div className="font-mono text-sm text-blue-400 font-bold tracking-tight bg-blue-500/5 px-2 py-1 rounded inline-block border border-blue-500/10">
+                          {row["Registration ID"]}
+                        </div>
+                        <div className="text-[11px] text-gray-500 font-medium mt-2 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
                           {new Date(row["Timestamp"]).toLocaleDateString()}
                         </div>
                       </td>
-                      <td className="p-4">
-                        <div className="font-bold text-white text-lg">{row["Team Name"]}</div>
+
+                      {/* TEAM INFO */}
+                      <td className="px-6 py-6 align-top">
+                        <div className="font-bold text-white text-lg tracking-tight group-hover:text-blue-400 transition-colors">
+                          {row["Team Name"]}
+                        </div>
                       </td>
-                      <td className="p-4 text-sm text-gray-300">
-                        <div className="font-bold text-white">{row["Leader Name"]}</div>
-                        <div className="text-xs text-gray-500">{row["Leader USN"]}</div>
-                        <div className="text-xs text-gray-500">{row["Leader Branch"]} • Sem {row["Leader Sem"]}</div>
-                        <div className="text-xs text-gray-500 mt-1">{row["Leader Phone"]}</div>
+
+                      {/* LEADER */}
+                      <td className="px-6 py-6 align-top">
+                        <div className="flex flex-col gap-1">
+                          <span className="font-bold text-gray-200 text-base">{row["Leader Name"]}</span>
+                          <span className="text-xs font-mono text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded w-fit">{row["Leader USN"]}</span>
+                          <span className="text-xs text-gray-400 mt-1">{row["Leader Branch"]} • Sem {row["Leader Sem"]}</span>
+                          <a href={`tel:${row["Leader Phone"]}`} className="text-xs text-blue-400/80 hover:text-blue-400 mt-1 hover:underline w-fit">
+                            {row["Leader Phone"]}
+                          </a>
+                        </div>
                       </td>
-                      <td className="p-4 text-sm text-gray-300">
+
+                      {/* MEMBER 2 */}
+                      <td className="px-6 py-6 align-top">
                         {row["Member 2 Name"] ? (
-                          <>
-                            <div className="font-bold text-white">{row["Member 2 Name"]}</div>
-                            <div className="text-xs text-gray-500">{row["Member 2 USN"]}</div>
-                            <div className="text-xs text-gray-500">{row["Member 2 Branch"]} • Sem {row["Member 2 Sem"]}</div>
-                          </>
+                          <div className="flex flex-col gap-1">
+                            <span className="font-bold text-gray-200 text-base">{row["Member 2 Name"]}</span>
+                            <span className="text-xs font-mono text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded w-fit">{row["Member 2 USN"]}</span>
+                            <span className="text-xs text-gray-400 mt-1">{row["Member 2 Branch"]} • Sem {row["Member 2 Sem"]}</span>
+                          </div>
                         ) : (
-                          <span className="text-gray-600 italic">No Member</span>
+                          <span className="text-gray-700 text-sm italic font-medium">--</span>
                         )}
                       </td>
-                      <td className="p-4">
+
+                      {/* PAYMENT */}
+                      <td className="px-6 py-6 align-top">
                         {row["Payment Screenshot URL"] && row["Payment Screenshot URL"] !== "No File Uploaded" ? (
                           <a
                             href={row["Payment Screenshot URL"]}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 hover:underline text-xs"
+                            className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-3 py-2 rounded-lg text-xs font-medium transition-all border border-gray-700 hover:border-gray-600"
                           >
-                            <ExternalLink className="w-3 h-3" /> View Screenshot
+                            <ExternalLink className="w-3 h-3" /> Screenshot
                           </a>
                         ) : (
-                          <span className="text-gray-600 text-xs">No Upload</span>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/5 text-red-500/70 text-xs rounded-full border border-red-500/10">
+                            <AlertTriangle className="w-3 h-3" /> Missing
+                          </span>
                         )}
                       </td>
-                      <td className="p-4">
-                        <div className="flex flex-col gap-2">
+
+                      {/* ACTIONS */}
+                      <td className="px-8 py-6 align-top text-right">
+                        <div className="flex justify-end">
                           {updatingId === row["Registration ID"] ? (
-                            <span className="text-xs text-gray-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Updating</span>
+                            <div className="flex items-center gap-2 text-xs text-blue-400 bg-blue-500/10 px-3 py-2 rounded-lg border border-blue-500/20">
+                              <Loader2 className="w-3 h-3 animate-spin" /> Updating...
+                            </div>
                           ) : (
-                            <div className="flex bg-gray-800 rounded border border-gray-700 overflow-hidden">
+                            <div className="relative inline-block w-40">
                               <select
                                 disabled={updatingId === row["Registration ID"]}
-                                className="bg-transparent text-xs px-3 py-2 outline-none cursor-pointer hover:bg-white/5 transition-colors disabled:opacity-50"
+                                className="w-full bg-gray-800 text-white text-xs font-medium px-3 py-2.5 rounded-lg border border-gray-700 
+                                            hover:border-gray-600 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/50 outline-none cursor-pointer transition-all appearance-none"
                                 value=""
                                 onChange={(e) => handleStatusUpdate(row["Registration ID"], e.target.value)}
                               >
-                                <option value="">Change Status...</option>
-                                <option value="Verified">Verified</option>
-                                <option value="Rejected">Rejected</option>
-                                <option value="Pending Verification">Pending</option>
+                                <option value="" className="bg-gray-900 text-gray-400">Update Status...</option>
+                                <option value="Verified" className="bg-gray-900 text-green-400 font-bold">✓ Verified</option>
+                                <option value="Rejected" className="bg-gray-900 text-red-400 font-bold">✗ Rejected</option>
+                                <option value="Pending Verification" className="bg-gray-900 text-yellow-400 font-bold">○ Pending</option>
                               </select>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-xs">▼</div>
                             </div>
                           )}
                         </div>
@@ -415,16 +453,32 @@ const AdminPanel = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-gray-500">
+                    <td colSpan={7} className="p-16 text-center text-gray-500">
                       {fetchError ? (
-                        <div className="text-red-400 flex flex-col items-center gap-2">
-                          <AlertTriangle className="w-6 h-6" />
-                          <span className="font-bold">Error Loading Data</span>
-                          <span className="text-sm">{fetchError}</span>
-                          <span className="text-xs bg-gray-800 p-2 rounded mt-2 font-mono">Check console (F12) for raw response.</span>
+                        <div className="text-red-400 flex flex-col items-center gap-4 bg-red-500/5 p-8 rounded-2xl border border-red-500/10 max-w-md mx-auto">
+                          <AlertTriangle className="w-10 h-10 opacity-50" />
+                          <div>
+                            <span className="font-bold text-lg block mb-1">Error Loading Data</span>
+                            <span className="text-sm opacity-80">{fetchError}</span>
+                          </div>
+                          <button onClick={fetchData} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-2 rounded transition-colors">
+                            Try Again
+                          </button>
                         </div>
                       ) : (
-                        dataLoading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : "No registrations found matching your filters."
+                        <div className="flex flex-col items-center gap-3">
+                          {dataLoading ? (
+                            <>
+                              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                              <span className="text-sm animate-pulse">Syncing with database...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Search className="w-10 h-10 opacity-20" />
+                              <p>No registrations found matching your filters.</p>
+                            </>
+                          )}
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -437,6 +491,7 @@ const AdminPanel = () => {
       </main>
     </div>
   );
+
 };
 
 export default AdminPanel;
