@@ -179,9 +179,9 @@ const AdminPanel = () => {
   // FILTER LOGIC
   const filteredData = data.filter(item => {
     const matchesSearch =
-      item["Team Name"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item["Leader Name"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item["Registration ID"]?.toLowerCase().includes(searchTerm.toLowerCase());
+      String(item["Team Name"] || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(item["Leader Name"] || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(item["Registration ID"] || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'All' || item["Status"] === statusFilter;
 
