@@ -17,6 +17,20 @@
  * 7. Copy the "Web App URL" and paste it into components/RegistrationForm.tsx
  */
 
+// ------------------------------------------------------------------
+// HELPERS
+// ------------------------------------------------------------------
+function testAuth() {
+  // Run this function in the editor to force all permissions to be asked
+  console.log("Checking Permissions...");
+  SpreadsheetApp.getActiveSpreadsheet();
+  DriveApp.getRootFolder();
+  MailApp.getRemainingDailyQuota();
+  // This line forces the Slides permission prompt:
+  SlidesApp.openById("1ilHiw3IjUEAkLfqffweKNK40e_0Ox9KYGB5kiat3fOI");
+  console.log("All Permissions Granted!");
+}
+
 function doGet(e) {
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
@@ -218,8 +232,97 @@ JCET Hubballi
       }
       return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'ID not found' })).setMimeType(ContentService.MimeType.JSON);
     }
+    // --------------------------------------------------------
+    // ACTION: SEND CERTIFICATE
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+    // ACTION: SEND CERTIFICATE
+    // --------------------------------------------------------
+    if (action === 'sendCertificate') {
+      const debugLogs = [];
+      debugLogs.push("Started sendCertificate");
+
+      const idToFind = data.id;
+      const range = sheet.getDataRange();
+      const values = range.getValues();
+      const headers = values[0];
+
+      const regIdIdx = headers.indexOf("Registration ID");
+      const teamNameIdx = headers.indexOf("Team Name");
+      const leaderNameIdx = headers.indexOf("Leader Name");
+      const leaderEmailIdx = headers.indexOf("Leader Email");
+      const member2NameIdx = headers.indexOf("Member 2 Name");
+      const member2EmailIdx = headers.indexOf("Member 2 Email");
+
+      // --- CONFIGURATION ---
+      // TODO: USER MUST REPLACE THIS ID
+      // If this ID is wrong, it will fail silently or error
+      const SLIDE_TEMPLATE_ID = "1ilHiw3IjUEAkLfqffweKNK40e_0Ox9KYGB5kiat3fOI";
+
+      for (let i = 1; i < values.length; i++) {
+        if (values[i][regIdIdx] == idToFind) {
+          debugLogs.push(`Found ID match at row ${i + 1}`);
+
+          const participants = [];
+          if (values[i][leaderNameIdx] && values[i][leaderEmailIdx]) participants.push({ name: values[i][leaderNameIdx], email: values[i][leaderEmailIdx] });
+          if (values[i][member2NameIdx] && values[i][member2EmailIdx]) participants.push({ name: values[i][member2NameIdx], email: values[i][member2EmailIdx] });
+
+          const sentLog = [];
+
+          participants.forEach(p => {
+            debugLogs.push(`Processing: ${p.name} (${p.email})`);
+            try {
+              // 1. Copy Template
+              const copyFile = DriveApp.getFileById(SLIDE_TEMPLATE_ID).makeCopy(p.name + "_Certificate");
+              const copyId = copyFile.getId();
+              const copyDoc = SlidesApp.openById(copyId);
+              const slides = copyDoc.getSlides();
+              debugLogs.push(`Created copy: ${copyId}`);
+
+              // 2. Replace Text (Robust Method)
+              slides.forEach((slide, sIndex) => {
+                debugLogs.push(`Scanning Slide ${sIndex + 1}`);
+
+                const replacements = ["{{NAME}}", "{{Name}}", "{NAME}", "<NAME>"];
+                replacements.forEach(placeholder => {
+                  const count = slide.replaceAllText(placeholder, p.name);
+                  if (count > 0) debugLogs.push(`Global Replace Success: Replaced ${count} instances of ${placeholder}`);
+                });
+
+              });
+
+              copyDoc.saveAndClose();
+
+              // 3. Export PDF
+              const pdfBlob = copyFile.getAs(MimeType.PDF);
+
+              // 4. Email
+              MailApp.sendEmail({
+                to: p.email,
+                subject: "Certificate of Participation: CodeRush 2K25",
+                body: `Hello ${p.name},\n\nThank you for participating in CodeRush 2K25. Please find your official certificate attached.\n\nBest Regards,\nCodeRush Team\nJCET Hubballi`,
+                attachments: [pdfBlob]
+              });
+
+              copyFile.setTrashed(true);
+              sentLog.push(p.email);
+            } catch (err) {
+              debugLogs.push(`ERROR for ${p.email}: ${err.toString()}`);
+            }
+          });
+
+          return ContentService.createTextOutput(JSON.stringify({
+            result: 'success',
+            message: 'Processed. Check Logs.',
+            logs: debugLogs
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: 'ID not found', logs: debugLogs })).setMimeType(ContentService.MimeType.JSON);
+    }
 
   } catch (e) {
+    console.error("Global Error: " + e.toString());
     return ContentService.createTextOutput(JSON.stringify({ result: 'error', error: e.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {

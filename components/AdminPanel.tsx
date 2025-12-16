@@ -159,6 +159,40 @@ const AdminPanel = () => {
     }
   };
 
+  const [sendingCertId, setSendingCertId] = useState<string | null>(null);
+
+  // SEND CERTIFICATE
+  const handleSendCertificate = async (registrationId: string) => {
+    if (!confirm(`Are you sure you want to generate and email certificates for this team?`)) return;
+
+    setSendingCertId(registrationId);
+    try {
+      // Use 'no-cors' mode if just triggering, but we want response so we'll try standard POST 
+      // Note: 'no-cors' returns opaque response, so we won't know if it failed.
+      // Since our script handles CORS (hopefully), we use normal fetch.
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendCertificate",
+          id: registrationId
+        })
+      });
+
+      const result = await response.json();
+      if (result.result === 'success') {
+        alert("Certificates sent successfully!");
+      } else {
+        alert("Failed to send: " + (result.message || result.error || "Unknown error"));
+      }
+
+    } catch (error) {
+      console.error("Certificate generation failed", error);
+      alert("Network error or script failure. Check console.");
+    } finally {
+      setSendingCertId(null);
+    }
+  };
+
   // CSV DOWNLOAD
   const downloadCSV = () => {
     if (data.length === 0) return;
@@ -425,7 +459,7 @@ const AdminPanel = () => {
 
                       {/* ACTIONS */}
                       <td className="px-8 py-6 align-top text-right">
-                        <div className="flex justify-end">
+                        <div className="flex flex-col gap-2 justify-end items-end">
                           {updatingId === row["Registration ID"] ? (
                             <div className="flex items-center gap-2 text-xs text-blue-400 bg-blue-500/10 px-3 py-2 rounded-lg border border-blue-500/20">
                               <Loader2 className="w-3 h-3 animate-spin" /> Updating...
@@ -446,6 +480,25 @@ const AdminPanel = () => {
                               </select>
                               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-xs">▼</div>
                             </div>
+                          )}
+
+                          {/* Send Certificate Button - Only for Verified Users */}
+                          {row["Status"] === "Verified" && (
+                            <button
+                              onClick={() => handleSendCertificate(row["Registration ID"])}
+                              disabled={sendingCertId === row["Registration ID"]}
+                              className="flex items-center justify-center gap-2 w-40 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 hover:text-purple-300 text-xs font-bold px-3 py-2.5 rounded-lg border border-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {sendingCertId === row["Registration ID"] ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin" /> Sending...
+                                </>
+                              ) : (
+                                <>
+                                  <ShieldAlert className="w-3 h-3" /> Send Cert
+                                </>
+                              )}
+                            </button>
                           )}
                         </div>
                       </td>
