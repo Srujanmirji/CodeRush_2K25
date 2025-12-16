@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Shield, Lock, Users, Code, Gavel, Upload, Heart, AlertTriangle } from 'lucide-react';
+import { Shield, Lock, Users, Code, Gavel, Upload, Heart, AlertTriangle, Laptop } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,6 +40,11 @@ const rules = [
     id: 7,
     icon: <Users className="w-8 h-8 text-white" />,
     text: "Teams can consist of 1 to 2 members only."
+  },
+  {
+    id: 8,
+    icon: <Laptop className="w-8 h-8 text-cyber-blue" />,
+    text: "Everyone should bring their own laptop."
   }
 ];
 
