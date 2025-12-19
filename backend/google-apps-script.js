@@ -204,7 +204,7 @@ We are excited to have you onboard for this ultimate frontend battle.
    https://chat.whatsapp.com/YOUR_GROUP_LINK_HERE  <-- (Please update this link)
 
 2. Event Details:
-   - Date: 27th December 2025
+   - Date: 29th December 2025
    - Reporting Time: 09:00 AM
    - Venue: JCET Hubballi
 

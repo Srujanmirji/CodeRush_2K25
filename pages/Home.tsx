@@ -90,7 +90,7 @@ const Home = () => {
                         {/* Date */}
                         <div className="stat-card p-6 border border-white/10 bg-white/5 rounded-xl hover:border-cyber-blue/50 transition-all duration-300 hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] group">
                             <Calendar className="w-12 h-12 text-cyber-blue mx-auto mb-4 group-hover:animate-pulse" />
-                            <h3 className="text-2xl font-display font-bold text-white mb-2">27th December</h3>
+                            <h3 className="text-2xl font-display font-bold text-white mb-2">29th December</h3>
                             <p className="text-gray-400">2025</p>
                         </div>
 
