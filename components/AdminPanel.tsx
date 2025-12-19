@@ -291,7 +291,7 @@ const AdminPanel = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-wide text-white">ADMIN <span className="text-blue-500">DASHBOARD</span></h1>
-              <p className="text-xs text-gray-500 font-mono">HackTheFuture Config v2.1</p>
+              <p className="text-xs text-gray-500 font-mono">CodeRush Config v2.1</p>
             </div>
           </div>
 

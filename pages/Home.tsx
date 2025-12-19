@@ -176,10 +176,7 @@ const Home = () => {
                             <div className="footer-column flex flex-col items-center md:items-end gap-4 text-sm font-mono">
                                 <h4 className="text-white font-bold tracking-widest uppercase mb-2">Contact Us</h4>
 
-                                <a href="mailto:hackthefuture@jcet.edu.in" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
-                                    <span>hackthefuture@jcet.edu.in</span>
-                                    <Mail className="w-4 h-4 text-cyber-blue group-hover:scale-110 transition-transform" />
-                                </a>
+
 
                                 <div className="flex flex-col gap-2 items-center md:items-end">
                                     <a href="tel:9663341218" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">

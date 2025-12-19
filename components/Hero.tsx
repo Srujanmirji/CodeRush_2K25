@@ -65,7 +65,7 @@ const Hero = () => {
           className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-display font-black text-white mb-6 relative z-50 break-words leading-tight"
           style={{ textShadow: '0 0 30px rgba(0, 240, 255, 0.6)' }}
         >
-          HACK<span className="text-cyber-pink mx-2 inline-block" style={{ textShadow: '0 0 30px rgba(255, 0, 255, 0.6)' }}>THE</span>FUTURE
+          CODERUSH<span className="text-cyber-pink mx-2 inline-block" style={{ textShadow: '0 0 30px rgba(255, 0, 255, 0.6)' }}> 2K25</span>
         </h1>
 
         <div ref={subtitleRef} className="flex flex-col items-center mb-12">
@@ -75,7 +75,7 @@ const Hero = () => {
           <p
             className="text-sm xs:text-base sm:text-xl md:text-2xl font-sans text-cyber-blue/80 tracking-[0.1em] md:tracking-[0.2em] uppercase"
           >
-            Dec 27, 2025 • JCET Hubballi
+            Dec 29, 2025 • JCET Hubballi
           </p>
         </div>
 
