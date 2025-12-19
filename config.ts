@@ -14,7 +14,9 @@ export const ALLOWED_ADMIN_EMAILS = [
     "organizer@college.edu",
     "saisudheerdoddamani@gmail.com",
     "samarthkulkarni375@gmail.com",
-    "prajwaljinagi63@gmail.com"
+    "prajwaljinagi63@gmail.com",
+    "mayurhabib26@gmail.com",
+    "dharwadzishan@gmail.com"
 ];
 
 // Payment Config
