@@ -18,7 +18,8 @@ export const ALLOWED_ADMIN_EMAILS = [
     "mayurhabib26@gmail.com",
     "dharwadzishan@gmail.com",
     "pranavangadi02@gmail.com",
-    "shravan.pattar001@gmail.com"
+    "shravan.pattar001@gmail.com",
+    "avaneeshbhirdi3637@gmail.com"
 ];
 
 // Payment Config
