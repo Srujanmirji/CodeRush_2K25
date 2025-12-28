@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Terminal } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,12 +88,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[70]">
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
-          <a href="/" onClick={goToHome} className="flex items-center space-x-2 flex-shrink-0 cursor-pointer">
+          <Link to="/" onClick={goToHome} className="flex items-center space-x-2 flex-shrink-0 cursor-pointer">
             <Terminal className="text-cyber-blue w-6 h-6 md:w-8 md:h-8" />
             <span className="font-display font-bold text-lg md:text-2xl tracking-wider text-white whitespace-nowrap">
               CODERUSH<span className="text-cyber-pink"> 2K25</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Links */}
           <div className="hidden md:block">

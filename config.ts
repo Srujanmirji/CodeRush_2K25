@@ -10,6 +10,7 @@ export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXhhI
 // Admin Emails Whitelist
 export const ALLOWED_ADMIN_EMAILS = [
     "srujanmirji10@gmail.com",
+    "Srujanmirji20@gmail.com",
     "your.email@gmail.com",
     "organizer@college.edu",
     "saisudheerdoddamani@gmail.com",
@@ -19,7 +20,8 @@ export const ALLOWED_ADMIN_EMAILS = [
     "dharwadzishan@gmail.com",
     "pranavangadi02@gmail.com",
     "shravan.pattar001@gmail.com",
-    "avaneeshbhirdi3637@gmail.com"
+    "avaneeshbhirdi3637@gmail.com",
+    "Srujanmirji20@gmail.com"
 ];
 
 // Payment Config

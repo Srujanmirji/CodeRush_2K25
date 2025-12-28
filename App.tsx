@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import RegistrationPage from './pages/RegistrationPage';
 import AdminPanel from './components/AdminPanel';
 import ErrorBoundary from './components/ErrorBoundary';
+import TimerPage from './pages/TimerPage';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<RegistrationPage />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/timer" element={<TimerPage />} />
         </Routes>
       </ErrorBoundary>
     </Router>
