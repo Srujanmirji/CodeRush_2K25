@@ -10,7 +10,8 @@ const firebaseConfig = {
     storageBucket: "frontend-domination-2025.firebasestorage.app",
     messagingSenderId: "1015062770084",
     appId: "1:1015062770084:web:c5fa4c4ac10c9a2bc41131",
-    measurementId: "G-X5Y9C4F5E2"
+    measurementId: "G-X5Y9C4F5E2",
+    databaseURL: "https://frontend-domination-2025-default-rtdb.firebaseio.com"
 };
 
 // Initialize Firebase
