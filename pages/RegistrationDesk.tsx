@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Search, CheckCircle, Clock, ShieldCheck, User, Users, Phone, MapPin,
+    Search, CheckCircle, Clock, ShieldCheck, User, Users, Phone, MapPin, UserPlus,
     LogOut, AlertTriangle, Loader2
 } from 'lucide-react';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
@@ -266,6 +266,62 @@ const RegistrationDesk = () => {
         }
     };
 
+    // --- ON SPOT REGISTRATION ---
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const handleOnSpotRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        // Add defaults and match backend variable names
+        const payload = {
+            action: "register",
+            teamName: data.teamName,
+            leaderName: data.leaderName,
+            leaderEmail: data.leaderEmail,
+            leaderPhone: data.leaderPhone || "0000000000",
+            leaderBranch: "OnSpot",
+            leaderUSN: "OnSpot",
+            leaderSemester: "OnSpot",
+
+            // Member 2
+            member2Name: data.member2Name || "",
+            member2USN: "OnSpot", // Defaulted since input removed from UI
+            member2Email: data.member2Email || "",
+            member2Phone: "",
+            member2Branch: "",
+            member2Semester: "",
+
+            status: "Verified", // Try to send Verified (requires backend update to accept it)
+            imageBase64: "",
+        };
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(payload)
+            });
+
+            // Show success message in UI
+            setSuccessMessage("Registration Successful!");
+
+            // Delay reload to let user see the message
+            setTimeout(() => {
+                setShowAddModal(false);
+                setSuccessMessage("");
+                window.location.reload();
+            }, 2000);
+
+        } catch (err) {
+            console.error(err);
+            alert("Failed to register");
+        }
+    };
+
     // --- RENDER ---
     const filteredTeams = registrations.filter(r =>
         (r["Team Name"] || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -297,6 +353,8 @@ const RegistrationDesk = () => {
 
     return (
         <div className="flex flex-col h-screen bg-[#050507] text-white overflow-hidden font-sans">
+            <ThreeBackground />
+
             {/* Header */}
             <header className="flex-none h-16 bg-[#0a0a0f] border-b border-white/5 flex items-center justify-between px-6 z-20">
                 <div>
@@ -316,15 +374,24 @@ const RegistrationDesk = () => {
                 {/* LEFT PANEL: LIST */}
                 <div className="w-1/3 min-w-[350px] border-r border-white/5 bg-[#0a0a0f]/50 backdrop-blur flex flex-col">
                     <div className="p-4 border-b border-white/5">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                            <input
-                                type="text"
-                                placeholder="Search Team, ID, or Name..."
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-cyan-500/50 outline-none text-white placeholder:text-gray-600"
-                            />
+                        <div className="flex gap-2">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <input
+                                    type="text"
+                                    placeholder="Search Team..."
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-cyan-500/50 outline-none text-white placeholder:text-gray-600"
+                                />
+                            </div>
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="bg-green-600 hover:bg-green-500 text-white px-3 rounded-xl transition-colors flex items-center justify-center"
+                                title="On-Spot Registration"
+                            >
+                                <UserPlus className="w-5 h-5" />
+                            </button>
                         </div>
                     </div>
 
@@ -409,7 +476,7 @@ const RegistrationDesk = () => {
                                             <User className="w-4 h-4" /> Team Lead
                                         </div>
                                         <div className="text-lg font-bold text-white">{selectedTeam["Leader Name"]}</div>
-                                        <div className="text-sm text-gray-400 font-mono">{selectedTeam["Leader USN"]}</div>
+                                        <div className="text-sm text-gray-400 font-mono">{selectedTeam["Leader Email"]}</div>
                                         <div className="text-xs text-gray-500 mt-1">{selectedTeam["Leader Phone"]}</div>
                                     </div>
                                     {selectedTeam["Member 2 Name"] && (
@@ -432,14 +499,11 @@ const RegistrationDesk = () => {
                                         <MapPin className="w-5 h-5 text-green-500" /> Event Check-In
                                     </h3>
 
-                                    {teamCheckedIn ? (
+                                    {isCheckedIn(selectedTeam) ? (
                                         <div className="bg-green-500/10 text-green-400 border border-green-500/20 px-8 py-4 rounded-2xl">
                                             <CheckCircle className="w-8 h-8 mx-auto mb-2" />
                                             <div className="font-bold">Checked In</div>
-                                            <div className="text-xs opacity-70">
-                                                {/* Timestamp usually not in sheet status, so just show status */}
-                                                Confirmed Presence
-                                            </div>
+                                            <div className="text-xs opacity-70">Confirmed Presence</div>
                                         </div>
                                     ) : (
                                         <button
@@ -454,61 +518,76 @@ const RegistrationDesk = () => {
 
                                 {/* DOMAIN */}
                                 <div className="bg-[#0a0a0f] p-6 rounded-3xl border border-white/10 flex flex-col items-center">
-                                    {currentValues?.assignedDomain ? (
-                                        <div className="text-center w-full h-full flex flex-col items-center justify-center">
-                                            <div className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">Assigned Domain</div>
-                                            <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 py-2">
-                                                {currentValues.assignedDomain}
-                                            </div>
-                                            <div className="mt-4 p-2 bg-white/5 rounded-lg border border-white/10 w-full text-center text-xs text-gray-500 flex justify-between items-center px-4">
-                                                <span>Domain Locked</span>
-                                                <button
-                                                    onClick={handleResetDomain}
-                                                    className="text-red-400 hover:text-red-300 hover:underline cursor-pointer"
-                                                >
-                                                    Reset
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <SpinWheel spinning={isSpinning} onSpinEnd={handleSpinEnd} />
-
-                                            {pendingDomain ? (
-                                                <div className="mt-6 w-full animate-in fade-in slide-in-from-bottom-2">
-                                                    <div className="text-center mb-4">
-                                                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Result</div>
-                                                        <div className="text-2xl font-bold text-white">{pendingDomain}</div>
-                                                    </div>
+                                    {isCheckedIn(selectedTeam) ? (
+                                        currentValues?.assignedDomain ? (
+                                            <div className="text-center w-full h-full flex flex-col items-center justify-center">
+                                                <div className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">Assigned Domain</div>
+                                                <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 py-2">
+                                                    {currentValues.assignedDomain}
+                                                </div>
+                                                <div className="mt-4 p-2 bg-white/5 rounded-lg border border-white/10 w-full text-center text-xs text-gray-500 flex justify-between items-center px-4">
+                                                    <span>Domain Locked</span>
                                                     <button
-                                                        onClick={confirmDomain}
-                                                        disabled={updatingDomain}
-                                                        className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        onClick={handleResetDomain}
+                                                        className="text-red-400 hover:text-red-300 hover:underline cursor-pointer"
                                                     >
-                                                        {updatingDomain ? <Loader2 className="animate-spin w-5 h-5" /> : "Confirm Assignment"}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setPendingDomain(null)}
-                                                        disabled={updatingDomain}
-                                                        className="mt-2 w-full py-2 text-xs text-gray-500 hover:text-white transition-colors"
-                                                    >
-                                                        Discard & Spin Again
+                                                        Reset
                                                     </button>
                                                 </div>
-                                            ) : (
-                                                <button
-                                                    onClick={handleSpin}
-                                                    disabled={isSpinning || !teamCheckedIn}
-                                                    className="mt-6 w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                                >
-                                                    {isSpinning ? "Spinning..." : "Spin for Domain"}
-                                                </button>
-                                            )}
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {pendingDomain ? (
+                                                    <div className="flex flex-col gap-4 animate-in slide-in-from-bottom-4">
+                                                        <div className="text-center">
+                                                            <span className="text-gray-500 text-sm">Result</span>
+                                                            <h2 className="text-3xl font-bold text-white mb-6">{pendingDomain}</h2>
+                                                        </div>
+                                                        <div className="flex gap-3">
+                                                            <button
+                                                                onClick={confirmDomain}
+                                                                disabled={updatingDomain}
+                                                                className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2"
+                                                            >
+                                                                {updatingDomain ? <Loader2 className="animate-spin" /> : "Confirm Assignment"}
+                                                            </button>
+                                                            <button
+                                                                onClick={handleSpin}
+                                                                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm"
+                                                            >
+                                                                Discard & Spin Again
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <SpinWheel
+                                                        segments={[
+                                                            { label: "AI in Healthcare", color: "#EF4444" },
+                                                            { label: "AI in Finance", color: "#F59E0B" },
+                                                            { label: "AI in Education", color: "#3B82F6" },
+                                                            { label: "AI in Agriculture", color: "#10B981" },
+                                                        ]}
+                                                        onSpinEnd={handleSpinEnd}
+                                                        spinning={isSpinning}
+                                                    />
+                                                )}
 
-                                            {!teamCheckedIn && !pendingDomain && (
-                                                <p className="text-xs text-red-400 mt-2">Check-in required to spin</p>
-                                            )}
-                                        </>
+                                                {!isSpinning && !pendingDomain && (
+                                                    <div className="text-center mt-6">
+                                                        <button
+                                                            onClick={handleSpin}
+                                                            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold shadow-lg hover:shadow-purple-500/25 hover:scale-105 transition-all"
+                                                        >
+                                                            Spin Wheel
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )
+                                    ) : (
+                                        <div className="text-center text-gray-500 text-sm">
+                                            <p className="mb-2">Check-in required to spin</p>
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -516,12 +595,78 @@ const RegistrationDesk = () => {
                         </div>
                     ) : (
                         <div className="h-full flex flex-col items-center justify-center text-gray-600">
-                            <Users className="w-16 h-16 mb-4 opacity-20" />
+                            <Users className="w-16 h-16 mb-4 opacity-50" />
                             <p className="text-lg">Select a team from the list to view details</p>
                         </div>
                     )}
                 </div>
             </div>
+
+            {/* Modal for On-Spot */}
+            {showAddModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-gray-900 border border-white/20 p-8 rounded-2xl w-full max-w-md animate-in zoom-in-95 duration-200 relative overflow-hidden">
+                        {successMessage ? (
+                            <div className="absolute inset-0 bg-[#0a0a0f] z-10 flex flex-col items-center justify-center text-center p-6 animate-in fade-in zoom-in-95">
+                                <div className="w-24 h-24 bg-gradient-to-tr from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mb-6 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+                                    <CheckCircle className="w-12 h-12 text-green-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-bounce" />
+                                </div>
+                                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-3">
+                                    Registration Successful!
+                                </h2>
+                                <p className="text-gray-400 font-medium">Adding team to the roster...</p>
+                                <div className="mt-6 flex gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse delay-75"></div>
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse delay-150"></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <h2 className="text-2xl font-bold mb-6">On-Spot Registration</h2>
+                                <form onSubmit={handleOnSpotRegister} className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Team Name</label>
+                                            <input name="teamName" required className="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:border-green-500 outline-none" placeholder="Enter Team Name" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-sm text-gray-400 mb-1">Leader Name</label>
+                                                <input name="leaderName" required className="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:border-green-500 outline-none" placeholder="Full Name" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm text-gray-400 mb-1">Leader Phone</label>
+                                                <input name="leaderPhone" className="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:border-green-500 outline-none" placeholder="Phone" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Leader Email</label>
+                                            <input name="leaderEmail" type="email" required className="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:border-green-500 outline-none" placeholder="leader@example.com" />
+                                        </div>
+
+                                        <div className="border-t border-white/10 pt-4 mt-2">
+                                            <h3 className="text-sm font-bold text-gray-300 mb-3">Member 2 (Optional)</h3>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <input name="member2Name" className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm focus:border-purple-500 outline-none" placeholder="Member 2 Name" />
+                                                </div>
+                                                <div>
+                                                    <input name="member2Email" type="email" className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm focus:border-purple-500 outline-none" placeholder="Member 2 Email" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3 pt-4">
+                                        <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl">Cancel</button>
+                                        <button type="submit" className="flex-1 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl shadow-lg shadow-green-600/20">Register Team</button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

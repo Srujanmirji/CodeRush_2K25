@@ -4,14 +4,15 @@ import { Sparkles } from 'lucide-react';
 interface SpinWheelProps {
     spinning: boolean;
     onSpinEnd: (domain: string) => void;
+    segments?: { label: string; color: string; textColor?: string }[];
 }
 
-const SpinWheel: React.FC<SpinWheelProps> = ({ spinning, onSpinEnd }) => {
+const SpinWheel: React.FC<SpinWheelProps> = ({ spinning, onSpinEnd, segments: propsSegments }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [rotation, setRotation] = useState(0);
 
-    // Configuration
-    const segments = [
+    // Configuration - Use props or default
+    const segments = propsSegments || [
         { label: "AI in Agriculture", color: "#10B981", textColor: "#ffffff" }, // Emerald
         { label: "AI in Healthcare", color: "#EF4444", textColor: "#ffffff" }, // Red
         { label: "AI in Finance", color: "#F59E0B", textColor: "#ffffff" }, // Amber
