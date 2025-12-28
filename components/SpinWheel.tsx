@@ -73,7 +73,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ spinning, onSpinEnd, segments: pr
                 ctx.rotate(angle + sliceAngle / 2);
                 ctx.textAlign = "right";
                 ctx.textBaseline = "middle";
-                ctx.fillStyle = segment.textColor;
+                ctx.fillStyle = segment.textColor || "#ffffff"; // Default to white
                 ctx.font = "bold 14px sans-serif";
                 ctx.fillText(segment.label, radius - 20, 0);
                 ctx.restore();
@@ -188,7 +188,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ spinning, onSpinEnd, segments: pr
     }, [spinning, segments, onSpinEnd]);
 
     return (
-        <div className="relative flex flex-col items-center justify-center p-8 bg-black/40 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
+        <div className="flex flex-col items-center justify-center p-4">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-yellow-400" />
                 Random Domain Selector

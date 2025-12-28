@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Search, CheckCircle, Clock, ShieldCheck, User, Users, Phone, MapPin, UserPlus,
-    LogOut, AlertTriangle, Loader2
+    LogOut, AlertTriangle, Loader2, ArrowRight
 } from 'lucide-react';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
@@ -110,12 +110,6 @@ const RegistrationDesk = () => {
         const id = selectedTeam["Registration ID"];
 
         try {
-            console.log("Sending Check-In Request:", {
-                url: GOOGLE_SCRIPT_URL,
-                action: "eventCheckIn",
-                id: id
-            });
-
             // Update Google Sheet via Script
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -177,8 +171,8 @@ const RegistrationDesk = () => {
         const current = getFirebaseInfo(id);
         const domain = pendingDomain;
 
-        // Timeout protection
-        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Request timed out")), 5000));
+        // Timeout protection (Optional: can keep if we want to timeout the fetch, but native fetch doesn't timeout by default)
+        // For now, let's trust the fetch or standard browser timeouts.
 
         try {
             // Optimistic Update (Immediate UI Switch)
@@ -190,8 +184,8 @@ const RegistrationDesk = () => {
                 }
             }));
 
-            // 1. Save to Google Sheet (Primary for Data Persistence)
-            fetch(GOOGLE_SCRIPT_URL, {
+            // 1. Save to Google Sheet (Primary - Awaited)
+            await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors",
                 body: JSON.stringify({
@@ -199,31 +193,19 @@ const RegistrationDesk = () => {
                     id: id,
                     domain: domain
                 })
-            }).catch(e => console.error("Sheet Domain Sync Failed", e));
+            });
 
-            // 2. Save Domain to Firebase (Primary for Realtime UI)
-            await Promise.race([
-                set(ref(database, `registrations/${id}`), {
-                    ...current,
-                    assignedDomain: domain
-                }),
-                timeout
-            ]);
+            // 2. Save Domain to Firebase (Secondary/Realtime - Fire and Forget)
+            set(ref(database, `registrations/${id}`), {
+                ...current,
+                assignedDomain: domain
+            }).catch(e => console.warn("Firebase Domain Sync Failed", e));
 
             setPendingDomain(null);
-            // alert(`🎯 Assigned Domain: ${domain}`); // Removed alert for smoother flow
 
         } catch (e: any) {
             console.error("Domain assignment failed", e);
-            let msg = "Assignment failed. ";
-            if (e.message === "Request timed out") {
-                // Determine if we should treat it as success? 
-                // Since Sheet is fire-and-forget, maybe we just assume it worked? 
-                // No, let's warn.
-                msg += "Network timeout. Check connection.";
-            }
-            else msg += e.message;
-            alert(msg);
+            alert("Assignment failed. " + e.message);
         } finally {
             setUpdatingDomain(false);
         }
@@ -494,30 +476,47 @@ const RegistrationDesk = () => {
                             {/* ACTION ZONE */}
                             <div className="grid md:grid-cols-2 gap-6">
                                 {/* Check In */}
-                                <div className="bg-[#0a0a0f] p-6 rounded-3xl border border-white/10 flex flex-col items-center justify-center text-center">
-                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                        <MapPin className="w-5 h-5 text-green-500" /> Event Check-In
+                                <div className="bg-black/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl rounded-full"></div>
+
+                                    <h3 className="text-xl font-bold text-white mb-8 flex items-center gap-2 relative z-10">
+                                        <MapPin className="w-6 h-6 text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+                                        Event Check-In
                                     </h3>
 
                                     {isCheckedIn(selectedTeam) ? (
-                                        <div className="bg-green-500/10 text-green-400 border border-green-500/20 px-8 py-4 rounded-2xl">
-                                            <CheckCircle className="w-8 h-8 mx-auto mb-2" />
-                                            <div className="font-bold">Checked In</div>
-                                            <div className="text-xs opacity-70">Confirmed Presence</div>
+                                        <div className="relative z-10 animate-in zoom-in-50 duration-500">
+                                            <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full animate-pulse"></div>
+                                            <div className="bg-[#050507]/80 backdrop-blur-sm border border-green-500/50 px-10 py-8 rounded-2xl shadow-[0_0_30px_rgba(34,197,94,0.15)] ring-1 ring-green-500/30 relative">
+                                                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
+                                                    <CheckCircle className="w-8 h-8 text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                                                </div>
+                                                <div className="text-2xl font-bold text-white mb-1 tracking-wide">Checked In</div>
+                                                <div className="text-sm text-green-400 font-mono uppercase tracking-wider opacity-80">Confirmed Presence</div>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <button
-                                            onClick={handleCheckIn}
-                                            disabled={updatingCheckIn}
-                                            className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl shadow-lg shadow-green-600/20 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                        >
-                                            {updatingCheckIn ? <Loader2 className="animate-spin w-5 h-5" /> : "Confirm Check-In"}
-                                        </button>
+                                        <div className="w-full relative z-10">
+                                            <p className="text-gray-400 mb-6 max-w-[200px] mx-auto text-sm">Verify the team's presence to unlock domain assignment.</p>
+                                            <button
+                                                onClick={handleCheckIn}
+                                                disabled={updatingCheckIn}
+                                                className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-green-600/20 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group/btn"
+                                            >
+                                                {updatingCheckIn ? <Loader2 className="animate-spin w-5 h-5" /> : (
+                                                    <>
+                                                        Confirm Check-In
+                                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
 
                                 {/* DOMAIN */}
-                                <div className="bg-[#0a0a0f] p-6 rounded-3xl border border-white/10 flex flex-col items-center">
+                                <div className="bg-black/40 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex flex-col items-center shadow-2xl relative overflow-hidden">
+
                                     {isCheckedIn(selectedTeam) ? (
                                         currentValues?.assignedDomain ? (
                                             <div className="text-center w-full h-full flex flex-col items-center justify-center">
